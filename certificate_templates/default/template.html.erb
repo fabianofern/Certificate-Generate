@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: 'Helvetica', Arial, sans-serif; text-align: center; padding: 60px; }
+    .certificate { border: 10px solid #333; padding: 40px; }
+    h1 { font-size: 36px; margin-bottom: 30px; }
+    .participant { font-size: 28px; font-weight: bold; margin: 20px 0; }
+    .details { font-size: 18px; margin: 15px 0; }
+    .qr-code { margin-top: 30px; }
+    .uuid { font-size: 10px; color: #666; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="certificate">
+    <h1>CERTIFICADO DE CONCLUSÃO</h1>
+    <p>Certificamos que</p>
+    <div class="participant"><%= participant_name %></div>
+    <p>concluiu com êxito o curso/palestra</p>
+    <div class="details"><strong><%= event_title %></strong></div>
+    <div class="details">Carga Horária: <%= workload %> horas</div>
+    <div class="details">Período: <%= event_period %></div>
+    <div class="details">Local: <%= location %></div>
+    <div class="details">Instrutor: <%= instructor_name %></div>
+    <div class="details">Data de emissão: <%= issue_date %></div>
+    
+    <div class="qr-code">
+      <%= qr_code_image %>
+    </div>
+    
+    <div class="uuid">ID do Certificado: <%= certificate_uuid %></div>
+  </div>
+</body>
+</html>

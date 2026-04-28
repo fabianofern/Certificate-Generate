@@ -1,0 +1,32 @@
+# Rails
+backend/log/*
+backend/tmp/*
+backend/vendor/*
+backend/storage/*
+!backend/log/.keep
+!backend/tmp/.keep
+!backend/storage/.keep
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+uploads/pending/*
+uploads/processed/*
+!uploads/pending/.keep
+!uploads/processed/.keep
+
+# Node (futuro frontend)
+node_modules/
