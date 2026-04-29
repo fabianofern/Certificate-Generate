@@ -34,6 +34,11 @@ backend/.env.*.local
 .DS_Store
 Thumbs.db
 
+# Prompts and Summaries
+prompt*.txt
+resumo*.txt
+*.txt
+
 # Project Specific
 uploads/pending/*
 uploads/processed/*
