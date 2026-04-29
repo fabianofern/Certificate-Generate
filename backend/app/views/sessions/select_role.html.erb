@@ -1,0 +1,38 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body p-5 text-center">
+        <h3 class="mb-4 fw-bold">Selecionar Perfil (MVP)</h3>
+        <p class="text-muted mb-4">Escolha como deseja acessar o sistema. No futuro, isso será substituído pelo SSO do ToolCenter.</p>
+        
+        <div class="d-grid gap-3">
+          <%= button_to "Entrar como Administrador", set_role_path(role: 'administrador'), method: :post, class: 'btn btn-danger btn-lg text-start px-4 d-flex align-items-center' %>
+          <%= button_to "Entrar como Operador", set_role_path(role: 'operador'), method: :post, class: 'btn btn-primary btn-lg text-start px-4 d-flex align-items-center' %>
+          <%= button_to "Entrar como Aluno (Visualizador)", set_role_path(role: 'visualizador'), method: :post, class: 'btn btn-success btn-lg text-start px-4 d-flex align-items-center' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn-danger {
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    border: none;
+  }
+  .btn-success {
+    background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+    border: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+    border: none;
+  }
+  form.button_to {
+    width: 100%;
+  }
+  form.button_to button {
+    width: 100%;
+    justify-content: center;
+  }
+</style>

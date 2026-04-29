@@ -1,0 +1,73 @@
+<% content_for :layout, 'student' %>
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-5">
+        <div class="text-center mb-4">
+          <i class="bi bi-award text-primary mb-2" style="font-size: 3rem;"></i>
+          <h3 class="fw-bold">Meus Certificados</h3>
+          <p class="text-muted">Acesse a plataforma para visualizar e baixar seus certificados de participação.</p>
+        </div>
+
+        <% if flash[:alert] %>
+          <div class="alert alert-danger rounded-3">
+            <i class="bi bi-exclamation-triangle me-2"></i><%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <%= form_with url: process_student_login_path, local: true do |f| %>
+          <div class="mb-3">
+            <%= f.label :email, "E-mail", class: "form-label fw-medium" %>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+              <%= f.email_field :email, class: "form-control bg-light", required: true, placeholder: "seu@email.com" %>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <%= f.label :cpf, "CPF", class: "form-label fw-medium" %>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-person-vcard"></i></span>
+              <%= f.text_field :cpf, class: "form-control bg-light", required: true, placeholder: "Somente números" %>
+            </div>
+            <div class="form-text">Digite apenas os números do seu CPF.</div>
+          </div>
+
+          <div class="d-grid">
+            <%= f.button class: "btn btn-primary btn-lg rounded-3" do %>
+              Acessar Certificados <i class="bi bi-arrow-right ms-2"></i>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <div class="text-center mt-4">
+          <%= link_to 'Voltar para simulação de perfis', select_role_path, class: 'text-decoration-none small text-muted' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+  }
+  .input-group-text {
+    border: 1px solid #e2e8f0;
+    border-right: none;
+  }
+  .form-control {
+    border: 1px solid #e2e8f0;
+    border-left: none;
+  }
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #e2e8f0;
+  }
+  .input-group:focus-within .input-group-text,
+  .input-group:focus-within .form-control {
+    border-color: #667eea;
+  }
+</style>

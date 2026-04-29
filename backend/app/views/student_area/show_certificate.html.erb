@@ -1,0 +1,83 @@
+<div class="mb-4">
+  <%= link_to '← Voltar para Meus Certificados', student_area_dashboard_path, class: 'btn btn-outline-secondary btn-sm rounded-pill px-3' %>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+        <h4 class="fw-bold mb-0">Detalhes do Certificado</h4>
+        <% if @certificate.download_token_valid? %>
+          <%= link_to download_public_certificate_path(@certificate.download_token), class: 'btn btn-primary rounded-pill px-4', data: { turbo: false } do %>
+            <i class="bi bi-download me-2"></i> Baixar PDF
+          <% end %>
+        <% end %>
+      </div>
+      
+      <div class="card-body p-4 p-md-5">
+        <div class="bg-light rounded-4 p-4 p-md-5 text-center border" style="border-width: 2px !important; border-style: dashed !important; border-color: #dee2e6 !important;">
+          <h2 class="fw-bold mb-4" style="letter-spacing: 2px;">CERTIFICADO</h2>
+          <p class="fs-5 mb-2">Certificamos que</p>
+          <h3 class="fw-bold text-primary mb-4"><%= @certificate.participant.name %></h3>
+          <p class="fs-5 mb-2">concluiu com êxito o evento</p>
+          <h4 class="fw-bold mb-4"><%= @certificate.event.title %></h4>
+          
+          <div class="d-flex justify-content-center gap-4 mb-5 text-muted">
+            <div>
+              <i class="bi bi-clock d-block mb-1 fs-4"></i>
+              <small><%= @certificate.event.workload %> horas</small>
+            </div>
+            <div>
+              <i class="bi bi-calendar3 d-block mb-1 fs-4"></i>
+              <small><%= @certificate.event.period %></small>
+            </div>
+            <div>
+              <i class="bi bi-geo-alt d-block mb-1 fs-4"></i>
+              <small><%= @certificate.event.location %></small>
+            </div>
+          </div>
+          
+          <div class="bg-white p-3 d-inline-block rounded-3 shadow-sm mb-4">
+            <%= @qr_code.as_svg(module_size: 5).html_safe %>
+          </div>
+          
+          <p class="text-muted small mb-0">Escaneie o QR Code para verificar a autenticidade deste documento.</p>
+        </div>
+      </div>
+      
+      <div class="card-footer bg-white border-top-0 px-4 pb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between text-muted small">
+          <div class="mb-2 mb-md-0">
+            <strong>UUID:</strong> <span class="user-select-all"><%= @certificate.uuid %></span>
+          </div>
+          <div>
+            <strong>Emitido em:</strong> <%= @certificate.created_at.strftime('%d/%m/%Y às %H:%M') %>
+          </div>
+        </div>
+        
+        <% if !@certificate.download_token_valid? %>
+          <div class="alert alert-warning mt-3 mb-0 rounded-3 small">
+            <i class="bi bi-info-circle me-2"></i> O link para download direto expirou (válido por 7 dias). Para baixar novamente, solicite ao administrador.
+          </div>
+        <% else %>
+          <div class="alert alert-info mt-3 mb-0 rounded-3 small bg-opacity-10 border-0 text-primary">
+            <i class="bi bi-info-circle me-2"></i> Guarde seu certificado em local seguro. O link para download é válido apenas por 7 dias após a emissão.
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+  .text-primary {
+    color: #667eea !important;
+  }
+</style>

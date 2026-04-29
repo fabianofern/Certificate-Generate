@@ -1,0 +1,249 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <h2 class="fw-bold"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+    <p class="text-muted">Bem-vindo ao centro de comando do Certificate Generate.</p>
+  </div>
+</div>
+
+<!-- Estatísticas -->
+<div class="row g-4 mb-5">
+  <div class="col-md-3">
+    <div class="card stats-card h-100 border-start border-4 border-primary">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+          <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+            <i class="bi bi-calendar-event text-primary fs-4"></i>
+          </div>
+          <div>
+            <h6 class="card-subtitle text-muted mb-1">Total de Eventos</h6>
+            <h3 class="card-title mb-0 fw-bold"><%= total_events %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stats-card h-100 border-start border-4 border-success">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+          <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+            <i class="bi bi-people text-success fs-4"></i>
+          </div>
+          <div>
+            <h6 class="card-subtitle text-muted mb-1">Participantes</h6>
+            <h3 class="card-title mb-0 fw-bold"><%= total_participants %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stats-card h-100 border-start border-4 border-info">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+          <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3">
+            <i class="bi bi-patch-check text-info fs-4"></i>
+          </div>
+          <div>
+            <h6 class="card-subtitle text-muted mb-1">Certificados Gerados</h6>
+            <h3 class="card-title mb-0 fw-bold"><%= certificates_generated %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stats-card h-100 border-start border-4 border-warning">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+            <i class="bi bi-send text-warning fs-4"></i>
+          </div>
+          <div>
+            <h6 class="card-subtitle text-muted mb-1">Enviados</h6>
+            <h3 class="card-title mb-0 fw-bold"><%= certificates_sent %></h3>
+          </div>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-warning" role="progressbar" style="width: <%= sent_percentage %>%" aria-valuenow="<%= sent_percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <small class="text-muted mt-1 d-block"><%= sent_percentage %>% do total</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <!-- Ações Rápidas -->
+  <div class="col-md-8">
+    <h5 class="fw-bold mb-4">Ações Rápidas</h5>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <%= link_to new_event_path, class: 'text-decoration-none' do %>
+          <div class="card stats-card h-100 bg-primary text-white">
+            <div class="card-body text-center py-4">
+              <i class="bi bi-plus-circle fs-1 mb-2 d-block"></i>
+              <span class="fw-bold">Novo Evento</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-4">
+        <%= link_to import_participants_path, class: 'text-decoration-none' do %>
+          <div class="card stats-card h-100 bg-success text-white">
+            <div class="card-body text-center py-4">
+              <i class="bi bi-file-earmark-arrow-up fs-1 mb-2 d-block"></i>
+              <span class="fw-bold">Importar Participantes</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-4">
+        <%= link_to events_path, class: 'text-decoration-none' do %>
+          <div class="card stats-card h-100 bg-info text-white">
+            <div class="card-body text-center py-4">
+              <i class="bi bi-lightning-charge fs-1 mb-2 d-block"></i>
+              <span class="fw-bold">Gerar Certificados</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Eventos Recentes -->
+    <div class="card mt-5">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Eventos Recentes</h5>
+        <%= link_to 'Ver Todos', events_path, class: 'btn btn-sm btn-outline-primary' %>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th class="ps-4">Título</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th class="text-end pe-4">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% recent_events.each do |event| %>
+                <tr>
+                  <td class="ps-4 fw-medium"><%= event.title %></td>
+                  <td><%= event.created_at.strftime('%d/%m/%Y') %></td>
+                  <td>
+                    <% total = event.participants.count %>
+                    <% generated = event.certificates.count %>
+                    <span class="badge <%= generated == total ? 'bg-success' : 'bg-warning' %> bg-opacity-10 text-<%= generated == total ? 'success' : 'warning' %>">
+                      <%= generated %>/<%= total %>
+                    </span>
+                  </td>
+                  <td class="text-end pe-4">
+                    <%= link_to event, class: 'btn btn-sm btn-light' do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                    <%= link_to certificates_event_path(event), class: 'btn btn-sm btn-light text-primary' do %>
+                      <i class="bi bi-patch-check"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico e Certificados Pendentes -->
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold">Atividade (7 dias)</h5>
+      </div>
+      <div class="card-body">
+        <canvas id="activityChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Pendentes de Envio</h5>
+        <% if pending_certificates.any? %>
+          <%= link_to 'Ver Todos', certificates_path(status: 'pending'), class: 'btn btn-sm btn-outline-warning' %>
+        <% end %>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <% if pending_certificates.any? %>
+            <% pending_certificates.each do |cert| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div>
+                  <h6 class="mb-0 fw-bold small text-truncate" style="max-width: 150px;"><%= cert.participant.name %></h6>
+                  <small class="text-muted text-truncate d-block" style="max-width: 150px;"><%= cert.event.title %></small>
+                </div>
+                <%= button_to resend_email_certificate_path(cert), method: :post, class: 'btn btn-sm btn-warning rounded-pill' do %>
+                  <i class="bi bi-send-fill fs-6"></i>
+                <% end %>
+              </li>
+            <% end %>
+          <% else %>
+            <li class="list-group-item text-center py-4 text-muted">
+              <i class="bi bi-check2-circle fs-2 d-block mb-2"></i>
+              Tudo em dia!
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    <% data = activity_data %>
+    const ctx = document.getElementById('activityChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: <%= raw data[:days].map { |d| d.strftime('%d/%m') }.to_json %>,
+        datasets: [
+          {
+            label: 'Enviados',
+            data: <%= data[:sent_by_day].to_json %>,
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            fill: true,
+            tension: 0.4
+          },
+          {
+            label: 'Gerados',
+            data: <%= data[:pending_by_day].to_json %>,
+            borderColor: '#0dcaf0',
+            backgroundColor: 'rgba(13, 202, 240, 0.1)',
+            fill: true,
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  });
+</script>

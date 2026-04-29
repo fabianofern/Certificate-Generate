@@ -1,0 +1,52 @@
+<div class="mb-4">
+  <%= link_to '← Voltar ao Evento', event_path(@event), class: 'btn btn-outline-secondary btn-sm' %>
+</div>
+
+<h1>Certificados — <%= @event.title %></h1>
+
+<div class="card">
+  <div class="card-body">
+    <% if @certificates.any? %>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Participante</th>
+              <th>Email</th>
+              <th>UUID</th>
+              <th>Data de Emissão</th>
+              <th>Status de Envio</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @certificates.each do |cert| %>
+              <tr>
+                <td><%= cert.participant.name %></td>
+                <td><%= cert.participant.email %></td>
+                <td><code><%= cert.uuid %></code></td>
+                <td><%= cert.created_at.strftime('%d/%m/%Y %H:%M') %></td>
+                <td>
+                  <% if cert.sent? %>
+                    <span class="badge bg-success">Enviado</span>
+                  <% else %>
+                    <span class="badge bg-warning">Pendente</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to 'Ver', certificate_path(cert), class: 'btn btn-sm btn-outline-primary' %>
+                  <%= link_to 'Reenviar', resend_email_certificate_path(cert), class: 'btn btn-sm btn-outline-info' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-4">
+        <p class="text-muted">Nenhum certificado gerado para este evento.</p>
+        <%= link_to 'Gerar Certificados', event_path(@event), class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  </div>
+</div>

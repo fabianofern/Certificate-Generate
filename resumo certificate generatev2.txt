@@ -1,0 +1,105 @@
+📋 RESUMO DO PROJETO — Certificate Generate
+✅ O que já foi feito
+Table
+Etapa	Status	Detalhes
+Estrutura de pastas	✅ Completa	Projeto Certificate Generate/ com backend/, templates/, uploads/, docs/, scripts/, docker/
+Ruby on Rails instalado	✅ OK	Ruby 4.0.3 + Rails 8.1.3
+Banco de dados SQLite	✅ OK	storage/development.sqlite3 e storage/test.sqlite3
+Models e Migrations	✅ OK	Event, Participant, Certificate, EmailLog com associações e validações
+Callbacks de UUID e QR Code	✅ OK	Gerados automaticamente na criação do certificado
+Seed de teste	✅ OK	1 evento, 2 participantes, 2 certificados criados
+Console Rails funcional	✅ OK	Testado com sucesso
+Controllers API REST	✅ OK	Api::V1::EventsController, ParticipantsController, CertificatesController
+Rotas API	✅ OK	/api/v1/events, /api/v1/participants, /api/v1/certificates
+WebController base	✅ OK	Herda de ActionController::Base para views HTML
+Layout principal (Bootstrap)	✅ OK	app/views/layouts/application.html.erb com navbar
+View Index de Eventos	✅ Criada	app/views/events/index.html.erb
+Rotas Web	✅ OK	Confirmadas via rails routes
+❌ O que está com problema AGORA
+Table
+Problema	Descrição
+new_event_path não encontrado	A view events/index.html.erb não reconhece o helper de rota new_event_path, apesar das rotas existirem no rails routes
+Análise do rails routes:
+plain
+Copy
+events GET    /events(.:format)          events#index
+       POST   /events(.:format)          events#create
+ new_event GET /events/new(.:format)      events#new   ← EXISTE!
+A rota existe, mas o helper não está disponível na view. Isso pode ser porque:
+O WebController não está carregando os helpers de rotas (url_helpers)
+O Rails 8.1 com config.api_only = true pode estar bloqueando helpers em views
+🔧 PRÓXIMO PASSO IMEDIATO
+Verificar e corrigir o WebController para incluir os helpers de rotas:
+ruby
+Copy
+class WebController < ActionController::Base
+  layout 'application'
+  
+  # Forçar inclusão dos helpers de rotas
+  include Rails.application.routes.url_helpers
+end
+Ou verificar se config.api_only = true em config/application.rb está interferindo.
+📍 PARA ONDE VAMOS (próximos passos após corrigir)
+Table
+Passo	Descrição
+2.1	Corrigir helpers de rotas nas views
+2.2	Criar views show, new, edit de Eventos
+2.3	Criar controller e views de Participants (CRUD web)
+2.4	Criar controller e views de Certificates (listar, visualizar, download)
+3	Integrar importação de planilhas (roo/creek)
+4	Gerar PDFs com wicked_pdf ou Prawn
+5	Gerar QR Codes com rqrcode
+6	Enviar emails com Action Mailer + Sidekiq
+7	Validação offline via QR Code
+8	Integração futura com ToolCenter via JWT
+📁 Estrutura atual do backend
+plain
+Copy
+backend/
+├── app/
+│   ├── controllers/
+│   │   ├── api/v1/              ← Controllers API (JSON)
+│   │   │   ├── events_controller.rb
+│   │   │   ├── participants_controller.rb
+│   │   │   └── certificates_controller.rb
+│   │   ├── application_controller.rb
+│   │   ├── web_controller.rb    ← Base para views HTML
+│   │   └── events_controller.rb ← Controller web de Eventos
+│   ├── models/
+│   │   ├── event.rb
+│   │   ├── participant.rb
+│   │   ├── certificate.rb
+│   │   └── email_log.rb
+│   └── views/
+│       ├── layouts/
+│       │   └── application.html.erb
+│       └── events/
+│           └── index.html.erb
+├── config/
+│   └── routes.rb                 ← Rotas web + API
+├── db/
+│   ├── migrate/                  ← 4 migrations criadas
+│   ├── seeds.rb                  ← Seed de teste
+│   └── development.sqlite3       ← Banco SQLite
+└── storage/                      ← Arquivos SQLite
+🛠️ COMANDO PARA CORRIGIR AGORA
+Execute no PowerShell:
+powershell
+Copy
+cd "C:\Users\oi273341\Downloads\Certificate Generate\backend"
+
+# Verificar se api_only está ativo
+Get-Content config/application.rb | Select-String -Pattern "api_only"
+Se aparecer config.api_only = true, precisamos comentar ou remover essa linha.
+Depois:
+powershell
+Copy
+notepad app/controllers/web_controller.rb
+Substitua por:
+ruby
+Copy
+class WebController < ActionController::Base
+  layout 'application'
+  include Rails.application.routes.url_helpers
+end
+Salve, reinicie o servidor (rails server) e teste.

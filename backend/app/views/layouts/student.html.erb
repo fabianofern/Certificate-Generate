@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Área do Aluno - Certificate Generate</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  
+  <style>
+    body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .navbar-student { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .navbar-brand-student { font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .footer-student { background-color: #ffffff; border-top: 1px solid #eaeaea; color: #6c757d; padding: 2rem 0; font-size: 0.9rem; margin-top: auto; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg navbar-light navbar-student mb-5 py-3">
+    <div class="container">
+      <%= link_to student_area_dashboard_path, class: 'navbar-brand navbar-brand-student fs-4' do %>
+        <i class="bi bi-award-fill" style="-webkit-text-fill-color: #667eea;"></i> Certificate Generate
+      <% end %>
+      
+      <% if session[:student_id] %>
+        <div class="d-flex align-items-center">
+          <span class="text-muted me-3 d-none d-md-inline">Olá, <%= Participant.find_by(id: session[:student_id])&.name&.split(' ')&.first %></span>
+          <%= button_to logout_path, method: :delete, class: 'btn btn-outline-danger btn-sm rounded-pill px-3' do %>
+            Sair <i class="bi bi-box-arrow-right ms-1"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </nav>
+
+  <div class="container flex-grow-1">
+    <% if notice %>
+      <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3" id="flash-notice">
+        <i class="bi bi-check-circle-fill me-2"></i><%= notice %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3" id="flash-alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><%= alert %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </div>
+
+  <footer class="footer-student text-center mt-5">
+    <div class="container">
+      <p class="mb-1"><strong>Certificate Generate</strong> - Sistema de Emissão de Certificados</p>
+      <p class="mb-0 small">Os certificados emitidos por esta plataforma possuem um QR Code para validação de autenticidade.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        setTimeout(function() {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>

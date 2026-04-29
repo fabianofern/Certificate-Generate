@@ -1,0 +1,186 @@
+<div class="mb-4">
+  <%= link_to '← Voltar', events_path, class: 'btn btn-outline-secondary btn-sm' %>
+</div>
+
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><%= @event.title %></h4>
+  </div>
+  <div class="card-body">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-clock-history text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Carga Horária</div>
+            <div class="fw-bold"><%= @event.workload %> horas</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-calendar3 text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Período</div>
+            <div class="fw-bold"><%= @event.period %></div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-0">
+          <i class="bi bi-geo-alt text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Local</div>
+            <div class="fw-bold"><%= @event.location %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-person-badge text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Instrutor</div>
+            <div class="fw-bold"><%= @event.instructor_name %></div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-envelope text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Email do Instrutor</div>
+            <div class="fw-bold"><%= @event.instructor_email %></div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-0">
+          <i class="bi bi-layout-text-window-reverse text-primary me-3 fs-4"></i>
+          <div>
+            <div class="text-muted small">Template</div>
+            <div class="fw-bold"><%= @event.template_name || 'Padrão' %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer d-flex flex-wrap gap-2 align-items-center bg-light">
+    <%= link_to edit_event_path(@event), class: 'btn btn-outline-warning btn-sm d-inline-flex align-items-center' do %>
+      <i class="bi bi-pencil me-2"></i> Editar
+    <% end %>
+
+    <%= link_to certificates_event_path(@event), class: 'btn btn-outline-info btn-sm d-inline-flex align-items-center' do %>
+      <i class="bi bi-eye me-2"></i> Ver Certificados
+    <% end %>
+
+    <div class="ms-sm-auto">
+      <%= button_to send_all_certificates_event_path(@event), 
+                     method: :post, 
+                     class: 'btn btn-primary btn-sm d-inline-flex align-items-center', 
+                     data: { turbo: false, confirm: 'Deseja enviar todos os certificados por e-mail?' } do %>
+        <i class="bi bi-send-fill me-2"></i> Enviar todos os certificados
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<%= form_with url: generate_certificates_event_path(@event), method: :post, data: { turbo: false } do |f| %>
+  <div class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+      <h5 class="mb-1">Participantes</h5>
+      <p class="text-muted small mb-0">Selecione os participantes para gerar certificados em massa.</p>
+    </div>
+    <%= f.button type: :submit, class: 'btn btn-success btn-sm d-inline-flex align-items-center' do %>
+      <i class="bi bi-file-earmark-pdf me-2"></i> Gerar Selecionados
+    <% end %>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 40px;">
+            <div class="form-check">
+              <input type="checkbox" id="select-all" class="form-check-input">
+              <label class="form-check-label" for="select-all" style="cursor: pointer; width: 100%; min-height: 1.2rem;"></label>
+            </div>
+          </th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>CPF</th>
+          <th>Status do Certificado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% participants = Participant.all.order(name: :asc) %>
+        <% if participants.any? %>
+          <% participants.each do |participant| %>
+            <% certificate = @event.certificates.find_by(participant: participant) %>
+            <tr class="<%= 'table-light text-muted' if certificate.present? %>">
+              <td>
+                <div class="form-check">
+                  <%= check_box_tag 'participant_ids[]', participant.id, false, 
+                      disabled: certificate.present?,
+                      class: 'form-check-input participant-checkbox',
+                      id: "participant_#{participant.id}" %>
+                  <label class="form-check-label" for="participant_<%= participant.id %>" style="cursor: pointer; width: 100%; min-height: 1.2rem;"></label>
+                </div>
+              </td>
+              <td>
+                <%= link_to participant.name, participant_path(participant), class: 'text-decoration-none fw-bold' %>
+              </td>
+              <td><%= participant.email %></td>
+              <td><%= participant.cpf %></td>
+              <td>
+                <% if certificate %>
+                  <span class="badge bg-success">
+                    <i class="bi bi-check-circle"></i> Gerado
+                  </span>
+                  <small class="text-muted d-block" style="font-size: 0.7rem;"><%= certificate.uuid.first(8) %></small>
+                <% else %>
+                  <span class="badge bg-warning text-dark">Pendente</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="text-center py-5">
+              <p class="text-muted mb-3">Nenhum participante cadastrado no sistema.</p>
+              <%= link_to 'Cadastrar Novo Participante', new_participant_path, class: 'btn btn-outline-primary btn-sm' %>
+              <%= link_to 'Importar Planilha', import_participants_path, class: 'btn btn-outline-secondary btn-sm' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<style>
+  .participant-checkbox, #select-all {
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+  }
+  .form-check {
+    min-height: 1.5rem;
+  }
+</style>
+
+<script>
+  (function() {
+    // Delegação de eventos é a forma mais robusta para Turbo/Hotwire
+    const handleEvents = () => {
+      document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'select-all') {
+          const isChecked = e.target.checked;
+          const checkboxes = document.querySelectorAll('.participant-checkbox:not(:disabled)');
+          checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+          });
+        }
+      });
+    };
+
+    // Executa uma vez no carregamento inicial
+    if (!window.checkboxesInitialized) {
+      handleEvents();
+      window.checkboxesInitialized = true;
+    }
+  })();
+</script>

@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="mb-4">
+      <%= link_to participants_path, class: 'btn btn-link text-decoration-none p-0' do %>
+        <i class="bi bi-arrow-left me-1"></i> Voltar para Lista
+      <% end %>
+    </div>
+    
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3 border-bottom-0">
+        <h1 class="h4 mb-0 fw-bold text-dark"><i class="bi bi-person-gear me-2 text-primary"></i>Editar Participante</h1>
+      </div>
+      <div class="card-body p-4">
+        <%= render 'form', participant: @participant %>
+      </div>
+    </div>
+
+    <% if @participant.certificates.any? %>
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white py-3 border-bottom-0">
+          <h5 class="mb-0 fw-bold small text-uppercase text-muted">Certificados Vinculados</h5>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <% @participant.certificates.each do |cert| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div>
+                  <div class="fw-bold"><%= cert.event.title %></div>
+                  <small class="text-muted"><%= cert.uuid %></small>
+                </div>
+                <%= link_to certificate_path(cert), class: 'btn btn-sm btn-light' do %>
+                  <i class="bi bi-eye"></i>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

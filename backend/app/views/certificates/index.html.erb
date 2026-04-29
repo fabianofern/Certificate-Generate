@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Certificados Gerados</h1>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>UUID</th>
+            <th>Participante</th>
+            <th>Evento</th>
+            <th>Data de Geração</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @certificates.each do |certificate| %>
+            <tr>
+              <td><code class="small"><%= certificate.uuid.first(8) %>...</code></td>
+              <td><%= certificate.participant.name %></td>
+              <td><%= certificate.event.title %></td>
+              <td><%= certificate.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+              <td class="text-end">
+                <%= link_to 'Ver', certificate, class: 'btn btn-sm btn-info text-white' %>
+                <%= link_to 'Baixar', download_certificate_path(certificate), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Excluir', certificate, data: { turbo_method: :delete, turbo_confirm: 'Tem certeza?' }, class: 'btn btn-sm btn-danger' %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @certificates.empty? %>
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">Nenhum certificado gerado ainda.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

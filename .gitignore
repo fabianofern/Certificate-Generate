@@ -1,16 +1,28 @@
 # Rails
 backend/log/*
 backend/tmp/*
-backend/vendor/*
 backend/storage/*
-!backend/log/.keep
-!backend/tmp/.keep
-!backend/storage/.keep
+backend/public/assets
+backend/public/packs
+backend/public/packs-test
+backend/node_modules
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+backend/db/*.sqlite3-shm
+backend/db/*.sqlite3-wal
+
+# Dependencies
+.bundle/
+vendor/bundle
+node_modules/
 
 # Environment
 .env
 .env.local
 .env.*.local
+backend/.env
+backend/.env.local
+backend/.env.*.local
 
 # IDE
 .idea/
@@ -22,11 +34,17 @@ backend/storage/*
 .DS_Store
 Thumbs.db
 
-# Uploads
+# Project Specific
 uploads/pending/*
 uploads/processed/*
 !uploads/pending/.keep
 !uploads/processed/.keep
 
-# Node (futuro frontend)
-node_modules/
+# Test
+backend/coverage/
+backend/spec/examples.txt
+
+# Keep logs and tmp folders
+!backend/log/.keep
+!backend/tmp/.keep
+!backend/storage/.keep

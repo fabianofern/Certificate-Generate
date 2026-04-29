@@ -1,0 +1,72 @@
+<div class="mb-4">
+  <%= link_to '← Voltar para Lista', participants_path, class: 'text-decoration-none' %>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header bg-white">
+        <h5 class="card-title mb-0">Dados do Participante</h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Nome:</strong><br><%= @participant.name %></p>
+        <p><strong>Email:</strong><br><%= @participant.email %></p>
+        <p><strong>CPF:</strong><br><%= @participant.cpf %></p>
+        
+        <div class="d-grid gap-2 mb-3">
+          <%= link_to 'Editar Dados', edit_participant_path(@participant), class: 'btn btn-warning text-white' %>
+        </div>
+
+        <hr>
+
+        <h6 class="mb-3">Gerar Novo Certificado</h6>
+        <%= form_with url: generate_certificate_participant_path(@participant), method: :post, data: { turbo: false } do |f| %>
+          <div class="mb-3">
+            <%= f.label :event_id, "Selecione o Evento", class: "form-label small" %>
+            <%= f.collection_select :event_id, Event.all.order(title: :asc), :id, :title, { prompt: "Escolha um evento..." }, { class: "form-select form-select-sm", required: true } %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit "Gerar Certificado", class: "btn btn-sm btn-success" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Certificados Gerados</h5>
+        <span class="badge bg-primary"><%= @certificates.count %></span>
+      </div>
+      <div class="card-body">
+        <% if @certificates.any? %>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Evento</th>
+                  <th>Data de Geração</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @certificates.each do |certificate| %>
+                  <tr>
+                    <td><%= certificate.event.title %></td>
+                    <td><%= certificate.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                    <td class="text-end">
+                      <%= link_to 'Download', download_certificate_path(certificate), class: 'btn btn-sm btn-outline-primary' %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="text-muted text-center my-4">Nenhum certificado gerado para este participante ainda.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

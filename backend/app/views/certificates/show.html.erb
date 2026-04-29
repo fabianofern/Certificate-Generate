@@ -1,0 +1,123 @@
+<div class="mb-4 d-flex justify-content-between align-items-center">
+  <%= link_to certificates_path, class: 'btn btn-link text-decoration-none p-0' do %>
+    <i class="bi bi-arrow-left me-1"></i> Voltar para Lista
+  <% end %>
+  
+  <div class="btn-group shadow-sm">
+    <%= link_to download_certificate_path(@certificate), class: 'btn btn-primary d-inline-flex align-items-center' do %>
+      <i class="bi bi-download me-2"></i> Baixar PDF
+    <% end %>
+    <%= button_to resend_email_certificate_path(@certificate), method: :post, class: 'btn btn-outline-primary d-inline-flex align-items-center' do %>
+      <i class="bi bi-envelope-at me-2"></i> Reenviar Email
+    <% end %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body bg-light text-center py-5 rounded">
+        <div class="certificate-preview bg-white mx-auto shadow" style="max-width: 600px; border: 20px solid #f8f9fa; position: relative;">
+          <div style="border: 2px solid #333; padding: 40px;">
+            <h1 class="h3 mb-4 fw-bold" style="letter-spacing: 2px; color: #1a237e;">CERTIFICADO</h1>
+            <p class="mb-1 text-muted">Certificamos para os devidos fins que</p>
+            <h2 class="h4 fw-bold mb-4" style="color: #333;"><%= @certificate.participant.name %></h2>
+            <p class="mb-1 text-muted">concluiu com êxito o evento</p>
+            <h3 class="h5 fw-bold mb-5" style="color: #667eea;"><%= @certificate.event.title %></h3>
+            
+            <div class="d-flex justify-content-center mb-4">
+              <div class="bg-light p-2 rounded" style="border: 1px solid #eee;">
+                <%= @qr_code.as_svg(module_size: 3).html_safe %>
+              </div>
+            </div>
+            
+            <div style="font-size: 10px; color: #999;">
+              Código de Autenticação: <span class="fw-bold"><%= @certificate.uuid %></span><br>
+              Emitido em: <%= @certificate.created_at.strftime("%d/%m/%Y") %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Histórico de Envios</h5>
+      </div>
+      <div class="card-body">
+        <% if @email_logs.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Tipo</th>
+                  <th>Status</th>
+                  <th>Detalhes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @email_logs.each do |log| %>
+                  <tr>
+                    <td class="small fw-medium"><%= log.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                    <td><span class="badge bg-light text-dark border"><%= log.event_type.upcase %></span></td>
+                    <td>
+                      <span class="badge rounded-pill bg-<%= log.status == 'success' ? 'success' : 'danger' %> bg-opacity-10 text-<%= log.status == 'success' ? 'success' : 'danger' %> border border-<%= log.status == 'success' ? 'success' : 'danger' %> border-opacity-25">
+                        <%= log.status.capitalize %>
+                      </span>
+                    </td>
+                    <td class="small text-muted"><%= log.details %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="bi bi-envelope-slash fs-1 text-muted opacity-25"></i>
+            <p class="text-muted mt-2">Nenhum log de envio registrado.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white py-3">
+        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-info-circle me-2 text-primary"></i>Detalhes do Registro</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-4">
+          <label class="text-muted small fw-bold text-uppercase mb-1">Evento</label>
+          <div class="fw-bold text-dark"><%= @certificate.event.title %></div>
+          <div class="small text-muted"><%= @certificate.event.workload %> horas • <%= @certificate.event.period %></div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="text-muted small fw-bold text-uppercase mb-1">Participante</label>
+          <div class="fw-bold text-dark"><%= @certificate.participant.name %></div>
+          <div class="small text-muted"><%= @certificate.participant.email %></div>
+          <div class="small text-muted">CPF: <%= @certificate.participant.cpf %></div>
+        </div>
+
+        <div>
+          <label class="text-muted small fw-bold text-uppercase mb-1">Dados de Validação</label>
+          <pre class="bg-light p-3 rounded small border-0 mb-0" style="white-space: pre-wrap; font-family: monospace; font-size: 11px; max-height: 200px; overflow-y: auto;"><% 
+            begin
+              data = JSON.parse(@certificate.qr_code_data)
+              concat JSON.pretty_generate(data)
+            rescue JSON::ParserError, TypeError
+              concat @certificate.qr_code_data
+            end
+          %></pre>
+        </div>
+      </div>
+      <div class="card-footer bg-light border-0 py-3">
+        <%= button_to @certificate, method: :delete, form: { data: { turbo_confirm: 'Esta ação não pode ser desfeita. Deseja realmente excluir este certificado?' } }, class: 'btn btn-outline-danger w-100 d-inline-flex align-items-center justify-content-center' do %>
+          <i class="bi bi-trash3 me-2"></i> Excluir Certificado
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

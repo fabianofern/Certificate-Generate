@@ -9,7 +9,9 @@
     .participant { font-size: 28px; font-weight: bold; margin: 20px 0; }
     .details { font-size: 18px; margin: 15px 0; }
     .qr-code { margin-top: 30px; }
-    .uuid { font-size: 10px; color: #666; margin-top: 20px; }
+    .qr-code img { width: 80px; height: 80px; }
+    .footer { margin-top: 40px; display: flex; flex-direction: column; align-items: center; }
+    .uuid { font-size: 9px; color: #888; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -25,11 +27,12 @@
     <div class="details">Instrutor: <%= instructor_name %></div>
     <div class="details">Data de emissão: <%= issue_date %></div>
     
-    <div class="qr-code">
-      <%= qr_code_image %>
+    <div class="footer">
+      <div class="qr-code">
+        <%= qr_code_image %>
+      </div>
+      <div class="uuid">ID do Certificado: <%= certificate_uuid %></div>
     </div>
-    
-    <div class="uuid">ID do Certificado: <%= certificate_uuid %></div>
   </div>
 </body>
 </html>

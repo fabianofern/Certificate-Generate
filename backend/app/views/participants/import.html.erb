@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-white">
+        <h1 class="h3 mb-0">Importar Participantes</h1>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mb-4">
+          Faça upload de uma planilha (.xlsx ou .csv) contendo as colunas: 
+          <strong>nome</strong>, <strong>email</strong> e <strong>cpf</strong>.
+        </p>
+
+        <%= form_with url: import_participants_path, method: :post, multipart: true, local: true do |f| %>
+          <div class="mb-4">
+            <%= f.label :file, "Selecione o arquivo", class: "form-label" %>
+            <%= f.file_field :file, class: "form-control", accept: ".csv, .xls, .xlsx", required: true %>
+          </div>
+
+          <div class="d-grid">
+            <%= f.submit "Iniciar Importação", class: "btn btn-primary" %>
+          </div>
+          
+          <div class="text-center mt-3">
+            <%= link_to "Cancelar", participants_path, class: "btn btn-link text-decoration-none" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card mt-4 bg-light border-0">
+      <div class="card-body small">
+        <h6>Dicas para importação:</h6>
+        <ul class="mb-0">
+          <li>A primeira linha deve conter os cabeçalhos.</li>
+          <li>O campo email é usado para identificar duplicados.</li>
+          <li>Certifique-se de que o CPF está formatado corretamente.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

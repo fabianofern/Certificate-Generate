@@ -1,0 +1,65 @@
+<div class="mb-4">
+  <%= link_to '← Voltar', event_path(@event), class: 'btn btn-outline-secondary btn-sm' %>
+</div>
+
+<h1>Editar Evento</h1>
+
+<div class="card">
+  <div class="card-body">
+    <%= form_with model: @event, local: true do |f| %>
+      <% if @event.errors.any? %>
+        <div class="alert alert-danger">
+          <h6>Erros encontrados:</h6>
+          <ul>
+            <% @event.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :title, 'Título do Evento', class: 'form-label' %>
+        <%= f.text_field :title, class: 'form-control', required: true %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 mb-3">
+          <%= f.label :workload, 'Carga (h)', class: 'form-label' %>
+          <%= f.number_field :workload, class: 'form-control', min: 1, required: true %>
+        </div>
+        <div class="col-md-5 mb-3">
+          <%= f.label :start_date, 'Data Início', class: 'form-label' %>
+          <%= f.date_field :start_date, class: 'form-control', required: true %>
+        </div>
+        <div class="col-md-5 mb-3">
+          <%= f.label :end_date, 'Data Fim', class: 'form-label' %>
+          <%= f.date_field :end_date, class: 'form-control', required: true %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :location, 'Local', class: 'form-label' %>
+        <%= f.text_field :location, class: 'form-control', required: true %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= f.label :instructor_name, 'Nome do Instrutor', class: 'form-label' %>
+          <%= f.text_field :instructor_name, class: 'form-control', required: true %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= f.label :instructor_email, 'Email do Instrutor', class: 'form-label' %>
+          <%= f.email_field :instructor_email, class: 'form-control', required: true %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :template_name, 'Template do Certificado', class: 'form-label' %>
+        <%= f.select :template_name, [['Padrão', 'default'], ['Customizado', 'custom']], {}, class: 'form-select' %>
+      </div>
+
+      <%= f.submit 'Atualizar Evento', class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+Contexto: Estou desenvolvendo o Certificate Generate, um SaaS em Ruby on Rails 8.1.3 com SQLite (MVP), interface web (ERB + Bootstrap 5) e API REST (namespace api/v1). O projeto já tem models Event, Participant, Certificate, EmailLog funcionando, controllers web e API de Events, layout application.html.erb, e seed de teste.
+
+O QUE PRECISO AGORA:
+1. Criar controller web ParticipantsController (herdando de WebController) com ações: index, show, new, create, edit, update, destroy, import
+2. Criar views ERB para todas as ações acima (Bootstrap 5, em português)
+3. Implementar importação de planilhas Excel/CSV na ação import usando a gem 'roo'
+4. Adicionar gem 'roo' ao Gemfile e rodar bundle install
+5. A view index deve mostrar tabela com: nome, email, cpf, quantidade de certificados, botões de ação
+6. A view show deve mostrar dados do participante + lista de certificados dele
+7. A view import deve ter um formulário de upload de arquivo
+8. Atualizar config/routes.rb se necessário (verificar se resources :participants já está ok)
+9. Adicionar link "Participantes" na navbar do layout application.html.erb
+
+ESTRUTURA DE PASTAS EXISTENTE:
+- app/controllers/web_controller.rb (herda de ActionController::Base)
+- app/controllers/api/v1/ (controllers API já existem)
+- app/views/layouts/application.html.erb
+- app/models/participant.rb (já tem has_many :certificates, validates :name, :email, :cpf)
+- config/routes.rb já tem resources :participants com collection { post :import }
+
+IMPORTANTE:
+- Usar helpers de rotas (event_path, participant_path, etc.)
+- Mensagens flash: notice para sucesso, alert para erro
+- Formulários com form_with model: @participant, local: true
+- Tabelas responsivas com table-responsive
+- O controller já existe como esqueleto (rails generate controller), precisa preencher as ações
+- A gem 'roo' deve ler .xlsx e .csv com colunas: nome, email, cpf
+
+Me forneça o código completo dos arquivos: Gemfile (só a linha da gem), ParticipantsController, e todas as views em app/views/participants/
