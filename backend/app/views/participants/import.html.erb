@@ -7,7 +7,7 @@
       <div class="card-body">
         <p class="text-muted mb-4">
           Faça upload de uma planilha (.xlsx ou .csv) contendo as colunas: 
-          <strong>nome</strong>, <strong>email</strong> e <strong>cpf</strong>.
+          <strong>nome</strong>, <strong>email</strong>, <strong>cpf</strong> e <strong>matrícula</strong>.
         </p>
 
         <%= form_with url: import_participants_path, method: :post, multipart: true, local: true do |f| %>

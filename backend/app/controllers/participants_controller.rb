@@ -1,11 +1,48 @@
 class ParticipantsController < WebController
   before_action :authorize_management!
   before_action :authorize_admin!, only: [:destroy]
-  before_action :set_participant, only: %i[ show edit update destroy generate_certificate ]
+  before_action :set_participant, only: %i[ show edit update destroy generate_certificate toggle_active ]
 
   # GET /participants
   def index
-    @participants = Participant.all.order(name: :asc)
+    # Filtro de status: padrão é mostrar apenas os ativos.
+    @status_filter = params[:status] || 'active'
+    
+    @participants = if @status_filter == 'all'
+                      Participant.all
+                    else
+                      Participant.active
+                    end
+    
+    @participants = @participants.includes(:certificates)
+    
+    if params[:name].present?
+      @participants = @participants.where("name LIKE ?", "%#{params[:name].strip}%")
+    end
+
+    if params[:email].present?
+      @participants = @participants.where("email LIKE ?", "%#{params[:email].strip}%")
+    end
+
+    if params[:cpf].present?
+      @participants = @participants.where("cpf LIKE ?", "%#{params[:cpf].strip.gsub(/\D/, '')}%")
+    end
+
+    if params[:registration].present?
+      @participants = @participants.where("registration LIKE ?", "%#{params[:registration].strip}%")
+    end
+
+    if params[:event_ids].present? && params[:event_ids].reject(&:blank?).any?
+      @participants = @participants.joins(:certificates).where(certificates: { event_id: params[:event_ids] }).distinct
+    end
+
+    @participants = @participants.order(name: :asc)
+    @events = Event.all.order(title: :asc)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data generate_csv(@participants), filename: "participantes-#{Date.today}.csv" }
+    end
   end
 
   # GET /participants/1
@@ -73,6 +110,7 @@ class ParticipantsController < WebController
           email = row["email"]&.strip
           name = (row["nome"] || row["name"])&.strip
           cpf = row["cpf"]&.to_s&.strip
+          registration = (row["matricula"] || row["matrícula"] || row["registration"])&.to_s&.strip
 
           if email.blank?
             errors << "Linha #{i}: Email não pode ficar em branco"
@@ -82,6 +120,7 @@ class ParticipantsController < WebController
           participant = Participant.find_or_initialize_by(email: email)
           participant.name = name if name.present?
           participant.cpf = cpf if cpf.present?
+          participant.registration = registration if registration.present?
           
           if participant.save
             imported_count += 1
@@ -119,13 +158,31 @@ class ParticipantsController < WebController
     redirect_to @participant, alert: "Evento não encontrado."
   end
 
+  # PATCH /participants/1/toggle_active
+  def toggle_active
+    @participant.update(active: !@participant.active)
+    
+    status_msg = @participant.active ? "ativado" : "inativado"
+    redirect_back fallback_location: participants_path, notice: "Participante #{status_msg} com sucesso."
+  end
+
   private
     def set_participant
       @participant = Participant.find(params[:id])
     end
 
     def participant_params
-      params.require(:participant).permit(:name, :email, :cpf)
+      params.require(:participant).permit(:name, :email, :cpf, :registration, :active)
+    end
+
+    def generate_csv(participants)
+      require 'csv'
+      CSV.generate(headers: true, col_sep: ";") do |csv|
+        csv << ["Nome", "Email", "CPF", "Matricula", "Certificados"]
+        participants.each do |p|
+          csv << [p.name, p.email, p.cpf, p.registration, p.certificates.count]
+        end
+      end
     end
 
     def open_spreadsheet(file)

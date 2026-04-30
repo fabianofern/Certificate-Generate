@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     end
     member do
       post :generate_certificate
+      patch :toggle_active
     end
   end
 

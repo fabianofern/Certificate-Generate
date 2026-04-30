@@ -31,14 +31,30 @@
     </div>
   </div>
 
-  <div class="mb-4">
-    <%= f.label :cpf, "CPF", class: "form-label fw-bold small text-uppercase text-muted" %>
-    <div class="input-group">
-      <span class="input-group-text bg-light border-end-0"><i class="bi bi-card-text text-muted"></i></span>
-      <%= f.text_field :cpf, class: "form-control border-start-0 ps-0", placeholder: "000.000.000-00", required: true %>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= f.label :cpf, "CPF", class: "form-label fw-bold small text-uppercase text-muted" %>
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-card-text text-muted"></i></span>
+        <%= f.text_field :cpf, class: "form-control border-start-0 ps-0 cpf-mask", placeholder: "000.000.000-00", required: true, maxlength: 14 %>
+      </div>
     </div>
-    <div class="form-text small">O CPF é usado para consulta de certificados pelo aluno.</div>
+    <div class="col-md-6 mb-3">
+      <%= f.label :registration, "Matrícula", class: "form-label fw-bold small text-uppercase text-muted" %>
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-hash text-muted"></i></span>
+        <%= f.text_field :registration, class: "form-control border-start-0 ps-0", placeholder: "Ex: 2024001" %>
+      </div>
+    </div>
   </div>
+  
+  <div class="mb-4 form-check form-switch">
+    <%= f.check_box :active, class: "form-check-input", id: "participantActiveSwitch" %>
+    <%= f.label :active, "Participante Ativo", class: "form-check-label fw-bold small text-uppercase text-muted", for: "participantActiveSwitch" %>
+    <div class="form-text small">Participantes inativos não aparecem nas listagens principais nem recebem novos certificados.</div>
+  </div>
+
+  <div class="form-text small mb-4">O CPF e a Matrícula são usados para identificação e consulta.</div>
 
   <div class="d-grid gap-2">
     <%= f.submit "Salvar Alterações", class: "btn btn-primary py-2 fw-bold" %>

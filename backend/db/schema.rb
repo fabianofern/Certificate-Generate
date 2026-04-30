@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_29_180510) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_184051) do
   create_table "certificates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "download_token"
@@ -53,10 +53,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_180510) do
   end
 
   create_table "participants", force: :cascade do |t|
+    t.boolean "active", default: true
     t.string "cpf"
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name"
+    t.string "registration"
     t.datetime "updated_at", null: false
   end
 

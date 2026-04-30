@@ -29,7 +29,7 @@
             <%= f.label :cpf, "CPF", class: "form-label fw-medium" %>
             <div class="input-group">
               <span class="input-group-text bg-light"><i class="bi bi-person-vcard"></i></span>
-              <%= f.text_field :cpf, class: "form-control bg-light", required: true, placeholder: "Somente números" %>
+              <%= f.text_field :cpf, class: "form-control bg-light cpf-mask", required: true, placeholder: "000.000.000-00", maxlength: 14 %>
             </div>
             <div class="form-text">Digite apenas os números do seu CPF.</div>
           </div>

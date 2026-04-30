@@ -1,56 +1,142 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Participantes</h1>
-  <div>
-    <%= link_to 'Importar Planilha', import_participants_path, class: 'btn btn-outline-primary me-2' %>
+  <div class="d-flex gap-2 align-items-center">
+    <%= link_to 'Importar Planilha', import_participants_path, class: 'btn btn-outline-primary' %>
     <%= link_to 'Novo Participante', new_participant_path, class: 'btn btn-primary' %>
   </div>
 </div>
+<div class="card mb-4 border-0 shadow-sm">
+  <div class="card-body p-4">
+    <%= form_with url: participants_path, method: :get, local: true, class: "row g-3" do |f| %>
+      <div class="col-12 mb-2">
+        <div class="bg-light p-1 rounded-pill border d-inline-flex">
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="status" id="status_active" value="active" autocomplete="off" onchange="this.form.submit();" <%= 'checked' if @status_filter == 'active' %>>
+            <label class="btn btn-sm btn-outline-primary rounded-pill border-0 px-3" for="status_active">Somente Ativos</label>
 
-<div class="card">
+            <input type="radio" class="btn-check" name="status" id="status_all" value="all" autocomplete="off" onchange="this.form.submit();" <%= 'checked' if @status_filter == 'all' %>>
+            <label class="btn btn-sm btn-outline-primary rounded-pill border-0 px-3" for="status_all">Mostrar Todos</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <%= f.label :name, "Nome", class: "form-label small fw-bold text-muted text-uppercase mb-1" %>
+        <%= f.text_field :name, value: params[:name], class: "form-control border-light bg-light", placeholder: "Nome..." %>
+      </div>
+
+      <div class="col-md-2">
+        <%= f.label :email, "E-mail", class: "form-label small fw-bold text-muted text-uppercase mb-1" %>
+        <%= f.text_field :email, value: params[:email], class: "form-control border-light bg-light", placeholder: "E-mail..." %>
+      </div>
+
+      <div class="col-md-2">
+        <%= f.label :cpf, "CPF", class: "form-label small fw-bold text-muted text-uppercase mb-1" %>
+        <%= f.text_field :cpf, value: params[:cpf], class: "form-control border-light bg-light cpf-mask", placeholder: "000.000.000-00", maxlength: 14 %>
+      </div>
+
+      <div class="col-md-2">
+        <%= f.label :registration, "Matrícula", class: "form-label small fw-bold text-muted text-uppercase mb-1" %>
+        <%= f.text_field :registration, value: params[:registration], class: "form-control border-light bg-light", placeholder: "Matrícula..." %>
+      </div>
+      
+      <div class="col-md-4">
+        <%= f.label :event_ids, "Certificados", class: "form-label small fw-bold text-muted text-uppercase mb-1" %>
+        <%= f.collection_select :event_ids, @events, :id, :title, { selected: params[:event_ids] }, { multiple: true, class: "form-select border-light bg-light", style: "height: 50px;" } %>
+      </div>
+      
+      <div class="col-12 d-flex justify-content-start gap-2 mt-2">
+        <%= f.button type: :submit, class: "btn btn-primary px-4 shadow-sm", title: "Filtrar" do %>
+          <i class="bi bi-filter me-1"></i> Filtrar
+        <% end %>
+        <%= link_to participants_path, class: "btn btn-outline-secondary border-dashed px-3 shadow-sm", title: "Limpar Filtros" do %>
+          <i class="bi bi-brush"></i>
+        <% end %>
+        <%= link_to participants_path(format: :csv, name: params[:name], email: params[:email], cpf: params[:cpf], registration: params[:registration], event_ids: params[:event_ids]), class: "btn btn-success shadow-sm", title: "Exportar CSV" do %>
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0">
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-hover align-middle">
         <thead>
           <tr>
             <th>Nome</th>
             <th>Email</th>
-            <th>CPF</th>
+            <th>Matrícula</th>
+            <th>Status</th>
+            <th>CPF (Privado)</th>
             <th>Certificados</th>
             <th class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
-<% @participants.each do |participant| %>
-  <tr>
-    <td>
-      <div class="fw-bold text-dark"><%= participant.name %></div>
-      <div class="small text-muted"><%= participant.email %></div>
-    </td>
-    <td><%= participant.cpf %></td>
-    <td>
-      <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
-        <%= participant.certificates.count %> Certificados
-      </span>
-    </td>
-    <td class="text-end">
-      <div class="d-flex justify-content-end gap-2">
-        <%= link_to participant, class: 'btn btn-sm btn-outline-info d-inline-flex align-items-center', title: 'Ver Detalhes' do %>
-          <i class="bi bi-eye me-1"></i> Ver
-        <% end %>
-        <%= link_to edit_participant_path(participant), class: 'btn btn-sm btn-outline-warning d-inline-flex align-items-center', title: 'Editar' do %>
-          <i class="bi bi-pencil me-1"></i> Editar
-        <% end %>
-        <%= button_to participant, method: :delete, 
-            form: { data: { turbo_confirm: "Deseja realmente excluir o participante '#{participant.name}'? Todos os seus certificados vinculados também serão excluídos." } }, 
-            class: 'btn btn-sm btn-outline-danger d-inline-flex align-items-center', title: 'Excluir' do %>
-          <i class="bi bi-trash"></i>
-        <% end %>
-      </div>
-    </td>
-  </tr>
-<% end %>
+          <% @participants.each do |participant| %>
+            <tr>
+              <td><div class="fw-bold text-dark"><%= participant.name %></div></td>
+              <td><%= participant.email %></td>
+              <td><span class="text-muted font-monospace"><%= participant.registration.presence || '---' %></span></td>
+              <td>
+                <% if participant.active? %>
+                  <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2">Ativo</span>
+                <% else %>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-2">Inativo</span>
+                <% end %>
+              </td>
+              <td>
+                <span class="sensitive-data bg-light px-2 py-1 rounded" title="Passe o mouse para ver">
+                  <%= participant.cpf %>
+                </span>
+              </td>
+              <td>
+                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                  <%= participant.certificates.count %> Certificados
+                </span>
+              </td>
+              <td class="text-end">
+                <div class="d-flex justify-content-end gap-2">
+                  <%= link_to participant, class: 'btn btn-sm btn-outline-info d-inline-flex align-items-center', title: 'Ver Detalhes' do %>
+                    <i class="bi bi-eye me-1"></i> Ver
+                  <% end %>
+                  <%= link_to edit_participant_path(participant), class: 'btn btn-sm btn-outline-warning d-inline-flex align-items-center', title: 'Editar' do %>
+                    <i class="bi bi-pencil me-1"></i> Editar
+                  <% end %>
+                  <%= button_to toggle_active_participant_path(participant), method: :patch, 
+                      class: "btn btn-sm #{participant.active? ? 'btn-outline-secondary' : 'btn-outline-success'} d-inline-flex align-items-center", 
+                      title: participant.active? ? 'Desativar Participante' : 'Ativar Participante' do %>
+                    <i class="bi <%= participant.active? ? 'bi-toggle-on text-success' : 'bi-toggle-off text-secondary' %> fs-6"></i>
+                  <% end %>
+                  <%= button_to participant, method: :delete, 
+                      form: { data: { turbo_confirm: "Deseja realmente excluir o participante '#{participant.name}'? Todos os seus certificados vinculados também serão excluídos." } }, 
+                      class: 'btn btn-sm btn-outline-danger d-inline-flex align-items-center', title: 'Excluir' do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<style>
+  .sensitive-data {
+    filter: blur(5px);
+    transition: all 0.3s ease;
+    user-select: none;
+    font-family: monospace;
+    letter-spacing: 1px;
+  }
+  .sensitive-data:hover {
+    filter: blur(0);
+    user-select: all;
+    background-color: #fff !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+</style>

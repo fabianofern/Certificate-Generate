@@ -5,13 +5,19 @@
 <div class="row">
   <div class="col-md-4">
     <div class="card mb-4">
-      <div class="card-header bg-white">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">Dados do Participante</h5>
+        <% if @participant.active? %>
+          <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2">Ativo</span>
+        <% else %>
+          <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-2">Inativo</span>
+        <% end %>
       </div>
       <div class="card-body">
         <p><strong>Nome:</strong><br><%= @participant.name %></p>
         <p><strong>Email:</strong><br><%= @participant.email %></p>
         <p><strong>CPF:</strong><br><%= @participant.cpf %></p>
+        <p><strong>Matrícula:</strong><br><%= @participant.registration %></p>
         
         <div class="d-grid gap-2 mb-3">
           <%= link_to 'Editar Dados', edit_participant_path(@participant), class: 'btn btn-warning text-white' %>
@@ -20,13 +26,19 @@
         <hr>
 
         <h6 class="mb-3">Gerar Novo Certificado</h6>
-        <%= form_with url: generate_certificate_participant_path(@participant), method: :post, data: { turbo: false } do |f| %>
+        <% if @participant.active? %>
+          <%= form_with url: generate_certificate_participant_path(@participant), method: :post, data: { turbo: false } do |f| %>
           <div class="mb-3">
             <%= f.label :event_id, "Selecione o Evento", class: "form-label small" %>
             <%= f.collection_select :event_id, Event.all.order(title: :asc), :id, :title, { prompt: "Escolha um evento..." }, { class: "form-select form-select-sm", required: true } %>
           </div>
           <div class="d-grid">
             <%= f.submit "Gerar Certificado", class: "btn btn-sm btn-success" %>
+          </div>
+        <% end %>
+        <% else %>
+          <div class="alert alert-secondary py-2 small mb-0 text-center">
+            Participante inativo não pode receber certificados.
           </div>
         <% end %>
       </div>

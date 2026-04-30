@@ -106,7 +106,7 @@
         </tr>
       </thead>
       <tbody>
-        <% participants = Participant.all.order(name: :asc) %>
+        <% participants = Participant.active.order(name: :asc) %>
         <% if participants.any? %>
           <% participants.each do |participant| %>
             <% certificate = @event.certificates.find_by(participant: participant) %>
